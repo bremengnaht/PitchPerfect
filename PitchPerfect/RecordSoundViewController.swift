@@ -23,14 +23,11 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        _changeBtnState(btnRecord, isEnable: true)
-        _changeBtnState(btnStopRecording, isEnable: false)
+        _updateUI(isRecording: false)
     }
     
     @IBAction func recordAudio(_ sender: UIButton) {
-        lblRecording.text = "Recording In Progress"
-        _changeBtnState(btnRecord, isEnable: false)
-        _changeBtnState(btnStopRecording, isEnable: true)
+        _updateUI(isRecording: true)
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask, true)[0] as String
         let recordingName = "recordedVoice.wav"
@@ -48,9 +45,7 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
     }
     
     @IBAction func stopRecordAudio(_ sender: Any) {
-        lblRecording.text = "Tap to Record"
-        _changeBtnState(btnRecord, isEnable: true)
-        _changeBtnState(btnStopRecording, isEnable: false)
+        _updateUI(isRecording: false)
         
         audioRecorder.stop()
         let session = AVAudioSession.sharedInstance()
@@ -73,6 +68,12 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
     
+    private func _updateUI(isRecording: Bool) {
+        lblRecording.text = isRecording ? "Recording In Progress" : "Tap to Record"
+        _changeBtnState(btnRecord, isEnable: !isRecording)
+        _changeBtnState(btnStopRecording, isEnable: isRecording)
+    }
+    
     private func _changeBtnState(_ targetBtn: UIButton, isEnable: Bool) {
         if isEnable {
             targetBtn.isEnabled = true
@@ -83,4 +84,3 @@ class RecordSoundViewController: UIViewController, AVAudioRecorderDelegate {
         }
     }
 }
-
